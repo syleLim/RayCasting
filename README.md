@@ -1,2 +1,0 @@
-# RAY CASTING WITH JS
-===
