@@ -37,17 +37,17 @@ void	zero_delta_dist(double delta[2], double dist[2], int index)
 void	nonzero_delta_dist_x(double dist[2], double delta[2],
 							double ray[2], double pos[2])
 {
-	dist[X] = ray[X] > 0 ? (fabs(pos[X]) - pos[X]) / ray[X] :
-		(pos[X] - fabs(pos[X] + 1.)) / ray[X];
-	delta[X] = ray[X] > 0 ? -1. / ray[X] : -1. / ray[X];	
+	dist[X] = ray[X] > 0 ? fabs((pos[X] - floor(pos[X])) / ray[X]) :
+		fabs((floor(pos[X] + 1.) - pos[X]) / ray[X]);
+	delta[X] = fabs(1. / ray[X]);
 }
 
 void	nonzero_delta_dist_y(double dist[2], double delta[2],
 							double ray[2], double pos[2])
 {
-	dist[Y] = ray[Y] > 0 ? (fabs(pos[Y]) - pos[Y]) / ray[Y] :
-		(pos[Y] - fabs(pos[Y] + 1.) ) / ray[Y];
-	delta[Y] = ray[Y] > 0 ? -1. / ray[Y] : -1. / ray[Y];
+	dist[Y] = ray[Y] > 0 ? fabs((pos[Y] - floor(pos[Y])) / ray[Y]) :
+		fabs((floor(pos[Y] + 1.) - pos[Y]) / ray[Y]);
+	delta[Y] = fabs(1. / ray[Y]);
 }
 
 void	set_delta_dist(double dist[2], double delta[2], double ray[2],
@@ -81,16 +81,17 @@ double	get_distance(double dir[2], double ray[2], double dist[2], int flag)
 	xy[Y] = flag == X ? ray[Y] * dist[X] : ray[Y] * dist[Y];
 	xy[X] = fabs(xy[X]) > INF - 1 ?  0 : xy[X];
 	xy[Y] = fabs(xy[Y]) > INF - 1 ?  0 : xy[Y];
-	printf("ray %.3f %.3f\n", ray[X], ray[Y]);
-	printf("dist %.3f %.3f\n", dist[X], dist[Y]);
-	printf("xy %.3f %.3f\n", xy[X], xy[Y]);
-	printf("cos %.3f\n", vec_cos(dir, xy));
+	// printf("flag : %d\n", flag);
+	// printf("dist %.3f %.3f\n", dist[X], dist[Y]);
+	// printf("xy %.3f %.3f\n", xy[X], xy[Y]);
+	// printf("cos %.3f\n", vec_cos(dir, xy));
 	return (vec_len(xy) * fabs(vec_cos(dir, xy)));
 }
 
 int		hit_check(int map[MAP_X][MAP_Y], double x, double y, int flag)
 {
-	//printf("%d %d\n", (int)floor(x), (int)floor(y));
+	// printf("%.3f %.3f\n", x, y);
+	// printf("%d %d\n", (int)floor(x), (int)floor(y));
 	if ((int)floor(y) < 0 || (int)floor(x) < 0)
 		return (NON_HIT);
 	if (map[(int)floor(y)][(int)floor(x)] == 1)
@@ -113,29 +114,30 @@ double	caster(double ray[2], double pos[2], double dir[2], int map[MAP_X][MAP_Y]
 	int		hit;
 	
 	set_delta_dist(dist, delta, ray, pos);
-	//printf("dist : %.3f %.3f\ndelta : %.3f %.3f\n", dist[X], dist[Y], delta[X], delta[Y]);
+	//printf("dist : %.3f %.3f delta : %.3f %.3f\n", dist[X], dist[Y], delta[X], delta[Y]);
 	hit = CHECK;
 	while (hit == CHECK)
 	{
-		if (fabs(ray[X] * dist[X]) < fabs(ray[X] * dist[Y]))
+		
+		if (dist[X] < dist[Y])
 		{
-			if (dir[X] < 0)
+			if (ray[X] < 0)
 				hit = hit_check(map, pos[X] + ray[X] * dist[X] - 0.5, 
 								pos[Y] + ray[Y] * dist[X], X);
-			if (dir[X] > 0)
+			if (ray[X] > 0)
 				hit = hit_check(map, pos[X] + ray[X] * dist[X] + 0.5,
 								pos[Y] + ray[Y] * dist[X], X);
-			dist[X] += delta[X];
+			dist[X] += hit == CHECK ? delta[X] : 0;
 		}
 		else
 		{
-			if (dir[Y] < 0)
+			if (ray[Y] < 0)
 				hit = hit_check(map, pos[X] + ray[X] * dist[Y],
-								pos[Y] + ray[Y] * dist[Y]- 0.5, Y);
-			if (dir[Y] > 0)
+								pos[Y] + ray[Y] * dist[Y] - 0.5, Y);
+			if (ray[Y] > 0)
 				hit = hit_check(map, pos[X] + ray[X] * dist[Y],
 								pos[Y] + ray[Y] * dist[Y] + 0.5, Y);
-			dist[Y] += delta[Y];
+			dist[Y] += hit == CHECK ? delta[Y] : 0;
 		}
 	}
 	//printf("dist : %.3f %.3f\n", dist[X], dist[Y]);
@@ -160,9 +162,10 @@ int		raycasting (t_player *player)
 	{
 		set_ray(ray, player->dir, i, SCREEN_W);
 		
-		//printf("ray : %.3f %.3f\n", ray[X], ray[Y]);
+		//printf("\nray : %.3f %.3f\n", ray[X], ray[Y]);
 		distance = caster(ray, player->pos, player->dir, MAP);
 		
-		printf("%d : distance %.4f\n", i, distance);
+		printf("%d : distance %.4f\n", 13, distance);
 	}
+	
 }

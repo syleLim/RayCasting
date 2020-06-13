@@ -9,8 +9,8 @@
 # define FOV 66
 # define INIT_DIR_X -1
 # define INIT_DIR_Y 0
-# define INIT_POS_X 6
-# define INIT_POS_Y 6
+# define INIT_POS_X 5.5
+# define INIT_POS_Y 5.5
 
 # define X 0
 # define Y 1
