@@ -1,5 +1,4 @@
 #include "raycaster.h"
-#include "player.h"
 
 int main()
 {
@@ -7,5 +6,8 @@ int main()
 
 	if (!(player = init_player(INIT_POS_X, INIT_POS_Y,
 								INIT_DIR_X, INIT_DIR_Y)))
-		return (NULL);
+		return (0);
+	printf("dir : %.2f %.2f\npos : %.2f, %.2f\n", player->dir[X], player->dir[Y], player->pos[X], player->pos[Y]);
+	raycasting(player);
+	free(player);
 }
