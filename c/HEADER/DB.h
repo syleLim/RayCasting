@@ -6,11 +6,19 @@
 # define SCREEN_W 64
 # define SCREEN_H 48
 
-# define FOV 66
+# define FOV 60
+# define PI 3.1415926535
 # define INIT_DIR_X -1
 # define INIT_DIR_Y 0
 # define INIT_POS_X 5.5
 # define INIT_POS_Y 5.5
+# define MOVE_SPEED 0.3
+# define ROT_SPEED 3
+
+# define FORWARD 100
+# define BACK 101
+# define RIGHT 102
+# define LEFT 103
 
 # define X 0
 # define Y 1

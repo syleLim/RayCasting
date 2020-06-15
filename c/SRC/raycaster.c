@@ -1,5 +1,4 @@
 #include "raycaster.h"
-#include "ray.h"
 
 int MAP[MAP_X][MAP_Y] = { \
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}, \
@@ -28,51 +27,6 @@ int MAP[MAP_X][MAP_Y] = { \
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}  \
 };
 
-void	zero_delta_dist(double delta[2], double dist[2], int index)
-{
-	delta[index] = 0.;
-	dist[index] = INF;
-}
-
-void	nonzero_delta_dist_x(double dist[2], double delta[2],
-							double ray[2], double pos[2])
-{
-	dist[X] = ray[X] > 0 ? fabs((pos[X] - floor(pos[X])) / ray[X]) :
-		fabs((floor(pos[X] + 1.) - pos[X]) / ray[X]);
-	delta[X] = fabs(1. / ray[X]);
-}
-
-void	nonzero_delta_dist_y(double dist[2], double delta[2],
-							double ray[2], double pos[2])
-{
-	dist[Y] = ray[Y] > 0 ? fabs((pos[Y] - floor(pos[Y])) / ray[Y]) :
-		fabs((floor(pos[Y] + 1.) - pos[Y]) / ray[Y]);
-	delta[Y] = fabs(1. / ray[Y]);
-}
-
-void	set_delta_dist(double dist[2], double delta[2], double ray[2],
-						double pos[2])
-{
-	if (ray[X] == 0.)
-		zero_delta_dist(dist, delta, X);
-	else
-		nonzero_delta_dist_x(dist, delta, ray, pos);
-	if (ray[Y] == 0.)
-		zero_delta_dist(dist, delta, Y);
-	else
-		nonzero_delta_dist_y(dist, delta, ray, pos);
-}
-
-double vec_len(double vec[2])
-{
-	return (sqrt(vec[X] * vec[X] + vec[Y] * vec[Y]));
-}
-
-double vec_cos(double v1[2], double v2[2])
-{
-	return (v1[X] * v2[X] + v1[Y] * v2[Y]) / (vec_len(v1) * vec_len(v2));
-}
-
 double	get_distance(double dir[2], double ray[2], double dist[2], int flag)
 {
 	double xy[2];
@@ -81,31 +35,8 @@ double	get_distance(double dir[2], double ray[2], double dist[2], int flag)
 	xy[Y] = flag == X ? ray[Y] * dist[X] : ray[Y] * dist[Y];
 	xy[X] = fabs(xy[X]) > INF - 1 ?  0 : xy[X];
 	xy[Y] = fabs(xy[Y]) > INF - 1 ?  0 : xy[Y];
-	// printf("flag : %d\n", flag);
-	// printf("dist %.3f %.3f\n", dist[X], dist[Y]);
-	// printf("xy %.3f %.3f\n", xy[X], xy[Y]);
-	// printf("cos %.3f\n", vec_cos(dir, xy));
 	return (vec_len(xy) * fabs(vec_cos(dir, xy)));
 }
-
-int		hit_check(int map[MAP_X][MAP_Y], double x, double y, int flag)
-{
-	// printf("%.3f %.3f\n", x, y);
-	// printf("%d %d\n", (int)floor(x), (int)floor(y));
-	if ((int)floor(y) < 0 || (int)floor(x) < 0)
-		return (NON_HIT);
-	if (map[(int)floor(y)][(int)floor(x)] == 1)
-	  	printf("      %d %d\n", (int)floor(y), (int)floor(x));
-	return (map[(int)floor(y)][(int)floor(x)] != 0 ? flag : CHECK);
-}
-
-	// posX + rayX * distX < posY + rayY * distX ? cal x : cal y;
-		// x case :
-		// 	  dirX < 0 map[반올림(posX + rayX * distX - 1)][floor(posY + rayY * distX)]
-		// 	  dirX > 0 map[반올림(posX + rayX * distX)][floor(posY + rayY * distX)]
-		// y case :
-		//	  dirY < 0 map[floor(posX + rayX * distY)][반올림(posY + rayY * distY - 1)]
-		//	  dirY > 0 map[floor(posX + rayX * distY)][반올림(posY + rayY * distY)]
 	
 double	caster(double ray[2], double pos[2], double dir[2], int map[MAP_X][MAP_Y])
 {
@@ -114,42 +45,22 @@ double	caster(double ray[2], double pos[2], double dir[2], int map[MAP_X][MAP_Y]
 	int		hit;
 	
 	set_delta_dist(dist, delta, ray, pos);
-	//printf("dist : %.3f %.3f delta : %.3f %.3f\n", dist[X], dist[Y], delta[X], delta[Y]);
 	hit = CHECK;
 	while (hit == CHECK)
 	{
-		
 		if (dist[X] < dist[Y])
 		{
-			if (ray[X] < 0)
-				hit = hit_check(map, pos[X] + ray[X] * dist[X] - 0.5, 
-								pos[Y] + ray[Y] * dist[X], X);
-			if (ray[X] > 0)
-				hit = hit_check(map, pos[X] + ray[X] * dist[X] + 0.5,
-								pos[Y] + ray[Y] * dist[X], X);
+			hit = hit_check_x(map, pos, ray, dist);
 			dist[X] += hit == CHECK ? delta[X] : 0;
 		}
 		else
 		{
-			if (ray[Y] < 0)
-				hit = hit_check(map, pos[X] + ray[X] * dist[Y],
-								pos[Y] + ray[Y] * dist[Y] - 0.5, Y);
-			if (ray[Y] > 0)
-				hit = hit_check(map, pos[X] + ray[X] * dist[Y],
-								pos[Y] + ray[Y] * dist[Y] + 0.5, Y);
+			hit = hit_check_y(map, pos, ray, dist);
 			dist[Y] += hit == CHECK ? delta[Y] : 0;
 		}
 	}
-	//printf("dist : %.3f %.3f\n", dist[X], dist[Y]);
 	return (hit != NON_HIT ? get_distance(dir, ray, dist, hit) : 0);
-	
-	//TODO : dir이 음수, 양수일때의 올림 반올림 연산이 다르다. 해당 부분을 분리할 것인지 아니면
-	//			한번에 묶을 수 있는 모듈을 찾을 것 인지 정리해두어야 한다.
-	//int xy[2] = {ray[X] * b, ray[Y] * a}; 
-	//TODO : distance = len(xy) * cos(angle(dir, xy))
 }
-
-
 
 int		raycasting (t_player *player)
 {
@@ -161,11 +72,9 @@ int		raycasting (t_player *player)
 	while (++i < SCREEN_W)
 	{
 		set_ray(ray, player->dir, i, SCREEN_W);
-		
-		//printf("\nray : %.3f %.3f\n", ray[X], ray[Y]);
 		distance = caster(ray, player->pos, player->dir, MAP);
-		
-		printf("%d : distance %.4f\n", 13, distance);
+
+		//TODO : draw wall
 	}
 	
 }
