@@ -16,3 +16,5 @@ class Map  {
 						dir[X] * Math.tan(angle)];
 	}
 }
+
+export default Map;

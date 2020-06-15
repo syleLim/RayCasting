@@ -2,7 +2,8 @@
 
 int		hit_check(int map[MAP_Y][MAP_X], double x, double y, int flag)
 {
-	if ((int)floor(y) < 0 || (int)floor(x) < 0)
+	if ((int)floor(y) < 0 || (int)floor(x) < 0 ||
+		y >  MAP_Y - 1 || x > MAP_X - 1)
 		return (NON_HIT);
 	return (map[(int)floor(y)][(int)floor(x)] != 0 ? flag : CHECK);
 }

@@ -4,7 +4,7 @@ const NON_HIT = -1;
 const CHECK = -2;
 
 class Ray {
-	constructor(dir) {
+	constructor() {
 		this.dir = [0, 0];
 		this.dist = [0, 0];
 		this.delta = [0, 0];
@@ -25,9 +25,34 @@ class Ray {
 		this.dist = this.dir.map(e => Math.abs(1 / e));
 	}
 
-	hit_check(map, y, x, flag) {
+	hit(map, y, x, flag) {
 		if (y < 0 || x < 0)
 			return NON_HIT;
 		return map[parseInt(y)][parseInt(x)] != 0 ? flag : CHECK;
 	}
+
+	hit_check(map, pos) {
+		let isHit = CHECK;
+
+		if (this.dist[X] < this.dist[Y]) {
+			if (this.dir[X] < 0)
+				isHit = this.hit(map, pos[Y] + this.dir[Y] * this.dist[X],
+								pos[X] + this.dir[X] * this.dist[X] - 0.5, X);
+			if (this.dir[X] > 0)
+				isHit = this.hit(map, pos[Y] + this.dir[Y] * this.dist[X],
+					pos[X] + this.dir[X] * this.dist[X] + 0.5, X);
+			this.dist[X] += isHit === CHECK ? this.delta[X] : 0;
+		} else {
+			if (this.dir[Y] < 0)
+				isHit = this.hit(map, pos[Y] + this.dir[Y] * this.dist[Y] - 0.5,
+								pos[X] + this.dir[X] * this.dist[Y], Y);
+			if (this.dir[Y] > 0)
+				isHit = this.hit(map, pos[Y] + this.dir[Y] * this.dist[Y] + 0.5,
+					pos[X] + this.dir[X] * this.dist[Y], Y);
+			this.dist[Y] += isHit === CHECK ? this.delta[Y] : 0;
+		}
+		return isHit;
+	}
 }
+
+export default Ray;
