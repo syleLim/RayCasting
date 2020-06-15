@@ -18,10 +18,10 @@ class Game {
 			this.ray.set_ray(this.player.dir, this.player.pos,
 							this.map.plane, i, this.screen.width);
 			while (isHit == CHECK) {
-				isHit = this.ray.hit_check(this.map.map, this.player.pos);
+				isHit = this.ray.hit_check(this.map, this.player.pos);
 			}
+			isHit != NON_HIT ? drawing() : 0;
 		}
-		isHit != NON_HIT ? 
 	}
 
 	keyEvent(key) {
@@ -29,3 +29,5 @@ class Game {
 		this.casting();
 	}
 }
+
+export default Game

@@ -26,9 +26,9 @@ class Ray {
 	}
 
 	hit(map, y, x, flag) {
-		if (y < 0 || x < 0)
+		if (y < 0 || x < 0 || y > map.height - 1 || x > map.width - 1)
 			return NON_HIT;
-		return map[parseInt(y)][parseInt(x)] != 0 ? flag : CHECK;
+		return map.map[parseInt(y)][parseInt(x)] != 0 ? flag : CHECK;
 	}
 
 	hit_check(map, pos) {
