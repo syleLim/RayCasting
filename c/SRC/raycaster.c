@@ -38,7 +38,7 @@ double	get_distance(double dir[2], double ray[2], double dist[2], int flag)
 	return (vec_len(xy) * fabs(vec_cos(dir, xy)));
 }
 	
-double	caster(double ray[2], double pos[2], double dir[2], int map[MAP_X][MAP_Y])
+double	caster(double ray[2], double pos[2], double dir[2], int map[MAP_Y][MAP_X])
 {
 	double	dist[2];
 	double	delta[2];
@@ -74,7 +74,7 @@ int		raycasting (t_player *player)
 		set_ray(ray, player->dir, i, SCREEN_W);
 		distance = caster(ray, player->pos, player->dir, MAP);
 
+		printf("i : %2d / distance %.3f\n", i, distance);
 		//TODO : draw wall
-	}
-	
+	}	
 }

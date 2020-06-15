@@ -14,5 +14,5 @@ typedef struct	s_player
 t_player	*init_player(double pos_x, double pos_y,
 							double dir_x, double dir_y);
 void		move(double dir[2], double pos[2], double speed);
-void		rotate(double dir[2], int flag);
+void		rotate(double dir[2], double angle);
 #endif

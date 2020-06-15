@@ -3,8 +3,8 @@
 
 # define MAP_X 24
 # define MAP_Y 24
-# define SCREEN_W 64
-# define SCREEN_H 48
+# define SCREEN_W 32
+# define SCREEN_H 24
 
 # define FOV 60
 # define PI 3.1415926535

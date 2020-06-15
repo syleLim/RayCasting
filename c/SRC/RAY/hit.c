@@ -4,8 +4,6 @@ int		hit_check(int map[MAP_Y][MAP_X], double x, double y, int flag)
 {
 	if ((int)floor(y) < 0 || (int)floor(x) < 0)
 		return (NON_HIT);
-	if (map[(int)floor(y)][(int)floor(x)] == 1)
-	  	printf("     %d %d\n", (int)floor(y), (int)floor(x));
 	return (map[(int)floor(y)][(int)floor(x)] != 0 ? flag : CHECK);
 }
 
