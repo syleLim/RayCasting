@@ -9,7 +9,7 @@ class Map  {
 		this.plane = [0, 0];
 	}
 
-	set_plane(dir, fov) {
+	setPlane(dir, fov) {
 		const angle = (fov / 2) * (Math.PI / 180);
 
 		this.plane = [ -dir[Y] * Math.tan(angle),
@@ -17,4 +17,4 @@ class Map  {
 	}
 }
 
-export default Map;
+module.exports = Map;

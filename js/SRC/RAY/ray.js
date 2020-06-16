@@ -1,7 +1,10 @@
 const X = 0;
-const Y = 0;
+const Y = 1;
 const NON_HIT = -1;
 const CHECK = -2;
+const INF = 1000000000.
+
+const { vecCos, vecLen }  = require("../vector/vector");
 
 class Ray {
 	constructor() {
@@ -10,11 +13,19 @@ class Ray {
 		this.delta = [0, 0];
 	}
 
+	getWallDistance(dir, flag) {
+		let temp = this.dir.map((e, i) => 
+			flag == X ? e * this.dist[X] : e * this.dist[Y]
+		)
+		temp = temp.map(e => Math.abs(e) > INF - 1 ? 0 : e);
+		return vecLen(temp) * Math.abs(vecCos(dir, temp));
+	}
+
 	set_ray(dir, pos, plane, i, width) {
 		const ratio = 2 * i / width - 1;
 
 		this.dir = dir.map((e, i) => e + plane[i] * ratio);
-		this.delta = this.dir.map((e, i) => {
+		this.dist = this.dir.map((e, i) => {
 			if (e === 0)
 				return (0);
 			else if (e > 0)
@@ -22,13 +33,18 @@ class Ray {
 			else 
 				return Math.abs((Math.floor(pos[i] + 1) - pos[i]) / e);
 		});
-		this.dist = this.dir.map(e => Math.abs(1 / e));
+		this.delta = this.dir.map(e => {
+			if (e === 0)
+				return INF;
+			else 
+				return Math.abs(1 / e);
+		});
 	}
 
 	hit(map, y, x, flag) {
-		if (y < 0 || x < 0 || y > map.height - 1 || x > map.width - 1)
+		if (y < 0 || x < 0 || y > map.y - 1 || x > map.x - 1)
 			return NON_HIT;
-		return map.map[parseInt(y)][parseInt(x)] != 0 ? flag : CHECK;
+		return map.map[parseInt(y)][parseInt(x)] !== 0 ? flag : CHECK;
 	}
 
 	hit_check(map, pos) {
@@ -45,7 +61,7 @@ class Ray {
 		} else {
 			if (this.dir[Y] < 0)
 				isHit = this.hit(map, pos[Y] + this.dir[Y] * this.dist[Y] - 0.5,
-								pos[X] + this.dir[X] * this.dist[Y], Y);
+					pos[X] + this.dir[X] * this.dist[Y], Y);
 			if (this.dir[Y] > 0)
 				isHit = this.hit(map, pos[Y] + this.dir[Y] * this.dist[Y] + 0.5,
 					pos[X] + this.dir[X] * this.dist[Y], Y);
@@ -55,4 +71,4 @@ class Ray {
 	}
 }
 
-export default Ray;
+module.exports = Ray;

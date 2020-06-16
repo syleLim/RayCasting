@@ -3,8 +3,8 @@ const Y = 1;
 
 class Player {
 	constructor (info) {
-		this.pos = info.pos;
-		this.dir = info.dir;
+		this.pos = info.initPos;
+		this.dir = info.initDir;
 		this.moveSpeed = info.moveSpeed;
 		this.rotSpeed = info.rotSpeed;
 	}
@@ -36,4 +36,4 @@ class Player {
 	}
 }
 
-export default Player;
+module.exports = Player;

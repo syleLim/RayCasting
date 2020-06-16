@@ -12,7 +12,7 @@ double	vec_len(double vec[2])
 
 double	vec_cos(double v1[2], double v2[2])
 {
-	return (v1[X] * v2[X] + v1[Y] * v2[Y]) / (vec_len(v1) * vec_len(v2));
+	return ((v1[X] * v2[X] + v1[Y] * v2[Y]) / (vec_len(v1) * vec_len(v2)));
 }
 
 void	vec_rot(double vec[2], double angle)
