@@ -27,4 +27,9 @@
 # define CHECK -2
 # define NON_HIT -1
 
+# define TRUE 1
+# define FALSE 0
+
+typedef int t_bool;
+
 #endif
